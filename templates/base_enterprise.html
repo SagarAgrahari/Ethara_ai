@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}HRMS - Employee Management{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="/static/css/enterprise.css">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="app-container">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <div class="sidebar-logo-icon">
+                    <i class="fas fa-briefcase"></i>
+                </div>
+                <div class="sidebar-logo-text">HRMS</div>
+            </div>
+            <nav>
+                <ul class="sidebar-menu">
+                    <li class="sidebar-menu-item">
+                        <a href="/" class="sidebar-menu-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                            <span class="sidebar-menu-icon"><i class="fas fa-chart-line"></i></span>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item">
+                        <a href="/employees/" class="sidebar-menu-link {% if request.resolver_match.url_name == 'employees_list' %}active{% endif %}">
+                            <span class="sidebar-menu-icon"><i class="fas fa-users"></i></span>
+                            <span>Employees</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item">
+                        <a href="/attendance/" class="sidebar-menu-link {% if request.resolver_match.url_name == 'attendance_list' %}active{% endif %}">
+                            <span class="sidebar-menu-icon"><i class="fas fa-clock"></i></span>
+                            <span>Attendance</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item">
+                        <a href="/attendance/mark/" class="sidebar-menu-link {% if request.resolver_match.url_name == 'attendance_mark' %}active{% endif %}">
+                            <span class="sidebar-menu-icon"><i class="fas fa-check-square"></i></span>
+                            <span>Mark Attendance</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- TOP BAR -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <h1 class="topbar-title">{% block page_title %}Dashboard{% endblock %}</h1>
+            </div>
+            <div class="topbar-right">
+                <div class="topbar-profile">
+                    <div class="topbar-profile-avatar">A</div>
+                    <div class="topbar-profile-name">Admin</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        <i class="fas fa-check-circle"></i>
+                        <span>{{ message }}</span>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize date pickers
+            const dateInputs = document.querySelectorAll('.flatpickr-date');
+            dateInputs.forEach(input => {
+                if (!input._flatpickr) {
+                    flatpickr(input, {
+                        enableTime: false,
+                        dateFormat: 'Y-m-d',
+                        theme: 'light',
+                        altInput: false,
+                        allowInput: true
+                    });
+                }
+            });
+        });
+    </script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

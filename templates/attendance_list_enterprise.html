@@ -1,0 +1,184 @@
+{% extends 'base_enterprise.html' %}
+
+{% block title %}Attendance - HRMS{% endblock %}
+{% block page_title %}Attendance Management{% endblock %}
+
+{% block content %}
+    <!-- FILTER SECTION -->
+    <div class="filter-section">
+        <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px; color: #1F2937;">
+            <i class="fas fa-filter"></i> Filter Records
+        </h3>
+
+        <form method="get" id="filterForm" class="filter-row">
+            <div class="filter-group">
+                <label for="filterEmployee" class="filter-label">Employee</label>
+                <select id="filterEmployee" name="employee" class="form-select">
+                    <option value="">All Employees</option>
+                    {% for emp in employees %}
+                        <option value="{{ emp.id }}" {% if selected_employee == emp.id %}selected{% endif %}>
+                            {{ emp.emp_id }} - {{ emp.full_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="filterDate" class="filter-label">Date</label>
+                <input type="text" id="filterDate" name="date" class="form-control flatpickr-date" placeholder="Select date (YYYY-MM-DD)" value="{{ selected_date|default:'' }}">
+            </div>
+
+            <div class="filter-group">
+                <label class="filter-label">&nbsp;</label>
+                <div class="filter-control">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Filter
+                    </button>
+                    <button type="button" id="resetBtn" class="btn btn-secondary">
+                        <i class="fas fa-redo"></i> Reset
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- ATTENDANCE STATISTICS -->
+    {% if attendance_stats %}
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
+            <div class="card" style="border-left: 4px solid #0d6efd;">
+                <div class="card-body">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            <p class="card-text" style="font-size: 13px; color: #6B7280; margin-bottom: 8px;">Total Working Days</p>
+                            <h3 style="color: #0d6efd; margin: 0;">{{ attendance_stats.working_days }}</h3>
+                        </div>
+                        <i class="fas fa-calendar-days" style="font-size: 24px; color: #0d6efd; opacity: 0.2;"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card" style="border-left: 4px solid #198754;">
+                <div class="card-body">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            <p class="card-text" style="font-size: 13px; color: #6B7280; margin-bottom: 8px;">Present Days</p>
+                            <h3 style="color: #198754; margin: 0;">{{ attendance_stats.present_days }}</h3>
+                        </div>
+                        <i class="fas fa-check-circle" style="font-size: 24px; color: #198754; opacity: 0.2;"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card" style="border-left: 4px solid #dc3545;">
+                <div class="card-body">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            <p class="card-text" style="font-size: 13px; color: #6B7280; margin-bottom: 8px;">Absent Days</p>
+                            <h3 style="color: #dc3545; margin: 0;">{{ attendance_stats.absent_days }}</h3>
+                        </div>
+                        <i class="fas fa-times-circle" style="font-size: 24px; color: #dc3545; opacity: 0.2;"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card" style="border-left: 4px solid #ffc107;">
+                <div class="card-body">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            <p class="card-text" style="font-size: 13px; color: #6B7280; margin-bottom: 8px;">Pending Days</p>
+                            <h3 style="color: #ffc107; margin: 0;">{{ attendance_stats.pending_days }}</h3>
+                        </div>
+                        <i class="fas fa-clock" style="font-size: 24px; color: #ffc107; opacity: 0.2;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div style="background-color: #E0F2FE; border-left: 4px solid #0284C7; padding: 12px 16px; border-radius: 4px; margin-bottom: 24px;">
+            <p style="margin: 0; color: #0C4A6E; font-size: 14px;">
+                <i class="fas fa-info-circle" style="margin-right: 8px;"></i>
+                <strong>{{ attendance_stats.employee_id }} - {{ attendance_stats.employee_name }}</strong> | Current Month Statistics
+            </p>
+        </div>
+    {% else %}
+        <div style="background-color: #F3F4F6; border-left: 4px solid #9CA3AF; padding: 12px 16px; border-radius: 4px; margin-bottom: 24px;">
+            <p style="margin: 0; color: #374151; font-size: 14px;">
+                <i class="fas fa-info-circle" style="margin-right: 8px;"></i>
+                <strong>Tip:</strong> Select an employee from the filter to view their monthly attendance statistics (working days, present, absent, and pending days)
+            </p>
+        </div>
+    {% endif %}
+
+    <!-- ATTENDANCE TABLE -->
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Attendance Records</h2>
+            <a href="/attendance/mark/" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Mark Attendance
+            </a>
+        </div>
+
+        {% if attendances %}
+            <div class="table-wrapper">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Employee ID</th>
+                            <th>Full Name</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for attendance in attendances %}
+                            <tr>
+                                <td>
+                                    <strong>{{ attendance.employee.emp_id }}</strong>
+                                </td>
+                                <td>{{ attendance.employee.full_name }}</td>
+                                <td>{{ attendance.date|date:"d M, Y" }}</td>
+                                <td>
+                                    {% if attendance.status == 'Present' %}
+                                        <span class="badge badge-present">
+                                            <i class="fas fa-check"></i> Present
+                                        </span>
+                                    {% else %}
+                                        <span class="badge badge-absent">
+                                            <i class="fas fa-times"></i> Absent
+                                        </span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">
+                    <i class="fas fa-inbox"></i>
+                </div>
+                <div class="empty-state-title">No Attendance Records</div>
+                <div class="empty-state-text">Start recording attendance for your employees</div>
+                <a href="/attendance/mark/" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Mark Attendance
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('resetBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                document.getElementById('filterEmployee').value = '';
+                document.getElementById('filterDate').value = '';
+                const filterDate = document.getElementById('filterDate');
+                if (filterDate._flatpickr) {
+                    filterDate._flatpickr.clear();
+                }
+                window.location.href = '/attendance/';
+            });
+        });
+    </script>
+{% endblock %}

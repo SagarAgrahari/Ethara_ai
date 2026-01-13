@@ -1,0 +1,70 @@
+{% extends 'base_enterprise.html' %}
+
+{% block title %}Employees - HRMS{% endblock %}
+{% block page_title %}Employees{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Employee Directory</h2>
+            <a href="/employees/add/" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Add Employee
+            </a>
+        </div>
+
+        {% if employees %}
+            <div class="table-wrapper">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Employee ID</th>
+                            <th>Full Name</th>
+                            <th>Email</th>
+                            <th>Department</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for employee in employees %}
+                            <tr>
+                                <td>
+                                    <strong>{{ employee.emp_id }}</strong>
+                                </td>
+                                <td>{{ employee.full_name }}</td>
+                                <td>
+                                    <a href="mailto:{{ employee.email }}" style="color: var(--color-primary); text-decoration: none;">
+                                        {{ employee.email }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <span class="badge badge-present" style="background-color: rgba(37, 99, 235, 0.1); color: var(--color-primary);">
+                                        {{ employee.department }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="/attendance/employee/{{ employee.id }}/" class="btn btn-ghost btn-sm">
+                                        <i class="fas fa-calendar"></i>
+                                    </a>
+                                    <button class="btn btn-danger btn-sm" onclick="if(confirm('Delete this employee?')) window.location.href='/employees/delete/{{ employee.id }}/';">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">
+                    <i class="fas fa-inbox"></i>
+                </div>
+                <div class="empty-state-title">No Employees Found</div>
+                <div class="empty-state-text">Start by adding your first employee to the system</div>
+                <a href="/employees/add/" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add Employee
+                </a>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

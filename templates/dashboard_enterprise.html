@@ -1,0 +1,97 @@
+{% extends 'base_enterprise.html' %}
+
+{% block title %}Dashboard - HRMS{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+    <!-- SUMMARY CARDS -->
+    <div class="grid grid-4" style="margin-bottom: 40px;">
+        <div class="stat-card employees">
+            <div class="stat-card-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-card-label">Total Employees</div>
+            <div class="stat-card-value">{{ total_employees }}</div>
+        </div>
+
+        <div class="stat-card present">
+            <div class="stat-card-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-card-label">Attendance Records</div>
+            <div class="stat-card-value">{{ total_attendance }}</div>
+        </div>
+
+        <div class="stat-card late">
+            <div class="stat-card-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-card-label">This Month</div>
+            <div class="stat-card-value">{{ total_attendance }}</div>
+        </div>
+
+        <div class="stat-card absent">
+            <div class="stat-card-icon">
+                <i class="fas fa-chart-bar"></i>
+            </div>
+            <div class="stat-card-label">Performance</div>
+            <div class="stat-card-value">98%</div>
+        </div>
+    </div>
+
+    <!-- EMPLOYEE SUMMARY TABLE -->
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Employee Summary</h2>
+            <a href="/employees/add/" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus"></i> Add Employee
+            </a>
+        </div>
+
+        {% if employees %}
+            <div class="table-wrapper">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Employee ID</th>
+                            <th>Full Name</th>
+                            <th>Department</th>
+                            <th>Present Days</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for employee in employees %}
+                            <tr>
+                                <td>
+                                    <strong>{{ employee.emp_id }}</strong>
+                                </td>
+                                <td>{{ employee.full_name }}</td>
+                                <td>{{ employee.department }}</td>
+                                <td>
+                                    <span class="badge badge-present">{{ employee.present_days }} days</span>
+                                </td>
+                                <td>
+                                    <a href="/attendance/employee/{{ employee.id }}/" class="btn btn-ghost btn-sm">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">
+                    <i class="fas fa-inbox"></i>
+                </div>
+                <div class="empty-state-title">No Employees</div>
+                <div class="empty-state-text">Get started by adding your first employee</div>
+                <a href="/employees/add/" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add Employee
+                </a>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="mb-5">
+    <h1><i class="fas fa-tachometer-alt"></i> Dashboard</h1>
+    <p class="text-muted">Welcome to HRMS Lite - Manage your workforce efficiently</p>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-lg-3 col-md-6">
+      <div class="stat-card stat-card-1">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <h5><i class="fas fa-users"></i> Total Employees</h5>
+            <div class="stat-value">{{ total_employees }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+      <div class="stat-card stat-card-2">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <h5><i class="fas fa-clipboard-check"></i> Total Attendance</h5>
+            <div class="stat-value">{{ total_attendance }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <h4 class="card-title mb-4"><i class="fas fa-users"></i> Employee Summary</h4>
+      {% if employees %}
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th><i class="fas fa-id-badge"></i> Emp ID</th>
+                <th><i class="fas fa-user"></i> Name</th>
+                <th><i class="fas fa-building"></i> Department</th>
+                <th><i class="fas fa-check"></i> Present Days</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for e in employees %}
+                <tr>
+                  <td><strong>{{ e.emp_id }}</strong></td>
+                  <td>{{ e.full_name }}</td>
+                  <td>{{ e.department }}</td>
+                  <td><span class="badge bg-success">{{ e.present_days }}</span></td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="empty-state">
+          <i class="fas fa-inbox" style="font-size: 3rem; color: #ccc; margin-bottom: 1rem;"></i>
+          <p>No employees found. <a href="/employees/add/" class="btn btn-primary btn-sm">Add Employee</a></p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+{% endblock %}

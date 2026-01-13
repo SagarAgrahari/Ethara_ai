@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="section-header">
+    <div>
+      <h3><i class="fas fa-users"></i> Employee Management</h3>
+      <p class="text-muted">Manage all employees in the system</p>
+    </div>
+    <a class="btn btn-primary" href="/employees/add/"><i class="fas fa-plus-circle"></i> Add Employee</a>
+  </div>
+
+  {% if employees %}
+    <div class="card">
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th><i class="fas fa-id-badge"></i> Emp ID</th>
+                <th><i class="fas fa-user"></i> Name</th>
+                <th><i class="fas fa-envelope"></i> Email</th>
+                <th><i class="fas fa-building"></i> Department</th>
+                <th><i class="fas fa-cogs"></i> Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for e in employees %}
+                <tr>
+                  <td><strong>{{ e.emp_id }}</strong></td>
+                  <td>{{ e.full_name }}</td>
+                  <td><a href="mailto:{{ e.email }}">{{ e.email }}</a></td>
+                  <td><span class="badge bg-info">{{ e.department }}</span></td>
+                  <td>
+                    <a class="btn btn-sm btn-outline-secondary" href="/attendance/employee/{{ e.id }}/" title="View attendance"><i class="fas fa-calendar"></i> Attendance</a>
+                    <button class="btn btn-sm btn-danger" onclick="if(confirm('Are you sure?')) window.location.href='/employees/delete/{{ e.id }}/'" title="Delete employee"><i class="fas fa-trash"></i></button>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <i class="fas fa-inbox" style="font-size: 3rem; color: #ccc; margin-bottom: 1rem;"></i>
+      <p>No employees yet</p>
+      <a class="btn btn-primary" href="/employees/add/"><i class="fas fa-plus-circle"></i> Add Employee</a>
+    </div>
+  {% endif %}
+
+{% endblock %}
